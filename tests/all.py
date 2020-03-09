@@ -10,7 +10,8 @@ class AllTests(unittest.TestCase):
 
     def test_empty_collection_is_empty(self):
         c = Threadable()
-        self.assertTrue(c.isEmpty())
+        self.assertTrue(c.is_empty())
+
 
 if __name__ == '__main__':
     unittest.main()
