@@ -32,3 +32,6 @@ class Fluent:
             return tuple(mapped)
 
         return list(mapped)
+
+    def count(self):
+        return len(self._values)

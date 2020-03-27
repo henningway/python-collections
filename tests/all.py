@@ -10,6 +10,12 @@ def test_empty_collection_is_empty(collection):
 
 
 @pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
+def test_count(collection):
+    c = Fluent(collection)
+    assert 2 == c.count()
+
+
+@pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
 def test_all_returns_wrapped_collection(collection):
     c = Fluent(collection)
     assert c.all() == collection
