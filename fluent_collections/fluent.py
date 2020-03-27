@@ -8,6 +8,9 @@ class Fluent:
         self._values = values
 
     def first(self):
+        if not self._values:
+            return None
+
         return self._values[0]
 
     def is_empty(self):
