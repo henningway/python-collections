@@ -10,6 +10,9 @@ class Fluent:
     def is_empty(self):
         return not self._values
 
+    def all(self):
+        return self._values
+
     def first(self):
         if not self._values:
             return None
