@@ -10,6 +10,9 @@ class Fluent:
     def is_empty(self):
         return not self._values
 
+    def count(self):
+        return len(self._values)
+
     def all(self):
         return self._values
 
@@ -33,5 +36,10 @@ class Fluent:
 
         return list(mapped)
 
-    def count(self):
-        return len(self._values)
+    def filter(self, callback: Callable):
+        filtered = filter(callback, self._values)
+
+        if isinstance(self._values, Tuple):
+            return tuple(filtered)
+
+        return list(filtered)
