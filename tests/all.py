@@ -35,3 +35,12 @@ def test_last_returns_last_item(collection):
 def test_last_returns_none_when_empty():
     c = Fluent()
     assert None is c.last()
+
+
+@pytest.mark.parametrize("collection,expected", [
+    (['foo', 'bar'], ['oof', 'rab']),
+    (('foo', 'bar'), ('oof', 'rab'))
+])
+def test_map(collection, expected):
+    c = Fluent(collection)
+    assert expected == c.map(lambda s: s[::-1])

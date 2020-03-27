@@ -1,4 +1,4 @@
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Callable
 
 
 class Fluent:
@@ -25,4 +25,10 @@ class Fluent:
 
         return self._values[-1]
 
+    def map(self, callback: Callable):
+        mapped = map(callback, self._values)
 
+        if isinstance(self._values, Tuple):
+            return tuple(mapped)
+
+        return list(mapped)
