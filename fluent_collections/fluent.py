@@ -1,4 +1,4 @@
-class Threadable:
+class Fluent:
     def __init__(self, values=[]):
         self._values = values
 
