@@ -53,3 +53,9 @@ def test_map(items):
 def test_filter(items):
     c = collect(items)
     assert type(items)([2, 1]) == c.filter(lambda x: x < 3).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3], (1, 2, 3)])
+def test_reduce(items):
+    c = collect(items)
+    assert 6 == c.reduce(lambda x, y: x + y)

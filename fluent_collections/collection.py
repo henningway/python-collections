@@ -1,3 +1,4 @@
+from functools import reduce
 from typing import Union, Tuple, List, Callable, Any
 
 
@@ -46,6 +47,8 @@ class Collection:
 
         return Collection(list(mapped))
 
+    def reduce(self, callback: Callable) -> Any:
+        return reduce(callback, self._values)
 
 def collect(items=None):
     if items is None:
