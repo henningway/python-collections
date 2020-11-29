@@ -9,20 +9,28 @@ class Collection:
             values = []
         self._values = values
 
-    def is_empty(self) -> bool:
-        return not self._values
+    def all(self) -> Union[List, Tuple]:
+        return self._values
 
     def count(self) -> int:
         return len(self._values)
 
-    def all(self) -> Union[List, Tuple]:
-        return self._values
+    def filter(self, callback: Callable) -> 'Collection':
+        filtered = filter(callback, self._values)
+
+        if isinstance(self._values, Tuple):
+            return Collection(tuple(filtered))
+
+        return Collection(list(filtered))
 
     def first(self) -> Any:
         if not self._values:
             return None
 
         return self._values[0]
+
+    def is_empty(self) -> bool:
+        return not self._values
 
     def last(self) -> Any:
         if not self._values:
@@ -37,14 +45,6 @@ class Collection:
             return Collection(tuple(mapped))
 
         return Collection(list(mapped))
-
-    def filter(self, callback: Callable) -> 'Collection':
-        filtered = filter(callback, self._values)
-
-        if isinstance(self._values, Tuple):
-            return Collection(tuple(filtered))
-
-        return Collection(list(filtered))
 
 
 def collect(items=None):
