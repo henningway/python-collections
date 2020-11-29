@@ -58,6 +58,12 @@ class Collection:
         """
         return Collection(self._values[start:stop:step])
 
+    def take(self, limit: int) -> 'Collection':
+        if limit < 0:
+            return self.slice(limit)
+
+        return self.slice(0, limit)
+
 
 def collect(items=None):
     if items is None:

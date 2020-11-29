@@ -107,3 +107,15 @@ def test_slice_step(items):
 def test_slice_negative_start_stop_step(items):
     c = collect(items)
     assert type(items)([6, 4]) == c.slice(-2, -5, -2).all()
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz')])
+def test_take(items):
+    c = collect(items)
+    assert type(items)(['foo', 'bar']) == c.take(2).all()
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz')])
+def test_take_last(items):
+    c = collect(items)
+    assert type(items)(['bar', 'baz']) == c.take(-2).all()
