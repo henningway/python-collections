@@ -13,6 +13,14 @@ class Collection:
     def all(self) -> Union[List, Tuple]:
         return self._values
 
+    def append(self, *args) -> 'Collection':
+        values = list(self._values)
+
+        for item in args:
+            values.append(item)
+
+        return Collection(type(self._values)(values))
+
     def count(self) -> int:
         return len(self._values)
 

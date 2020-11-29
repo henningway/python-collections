@@ -119,3 +119,15 @@ def test_take(items):
 def test_take_last(items):
     c = collect(items)
     assert type(items)(['bar', 'baz']) == c.take(-2).all()
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+def test_append_one(items):
+    c = collect(items)
+    assert type(items)(['foo', 'bar', 'baz']) == c.append('baz').all()
+
+
+@pytest.mark.parametrize("items", [['foo'], ('foo',)])
+def test_append_multiple(items):
+    c = collect(items)
+    assert type(items)(['foo', 'bar', ['baz', 'qux']]) == c.append('bar', ['baz', 'qux']).all()
