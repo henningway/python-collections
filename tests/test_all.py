@@ -46,10 +46,10 @@ def test_last_returns_none_when_empty():
 @pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
 def test_map(collection):
     c = Fluent(collection)
-    assert type(collection)(['oof', 'rab']) == c.map(lambda s: s[::-1])
+    assert type(collection)(['oof', 'rab']) == c.map(lambda s: s[::-1]).all()
 
 
 @pytest.mark.parametrize("collection", [[2, 3, 1], (2, 3, 1)])
 def test_filter(collection):
     c = Fluent(collection)
-    assert type(collection)([2, 1]) == c.filter(lambda x: x < 3)
+    assert type(collection)([2, 1]) == c.filter(lambda x: x < 3).all()

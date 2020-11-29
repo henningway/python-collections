@@ -1,45 +1,49 @@
-from typing import Union, Tuple, List, Callable
+from typing import Union, Tuple, List, Callable, Any
+
+Collection = Union[List, Tuple]
 
 
 class Fluent:
-    _values: Union[List, Tuple]
+    _values: Collection
 
-    def __init__(self, values=[]):
+    def __init__(self, values=None):
+        if values is None:
+            values = []
         self._values = values
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         return not self._values
 
-    def count(self):
+    def count(self) -> int:
         return len(self._values)
 
-    def all(self):
+    def all(self) -> Collection:
         return self._values
 
-    def first(self):
+    def first(self) -> Any:
         if not self._values:
             return None
 
         return self._values[0]
 
-    def last(self):
+    def last(self) -> Any:
         if not self._values:
             return None
 
         return self._values[-1]
 
-    def map(self, callback: Callable):
+    def map(self, callback: Callable) -> 'Fluent':
         mapped = map(callback, self._values)
 
         if isinstance(self._values, Tuple):
-            return tuple(mapped)
+            return Fluent(tuple(mapped))
 
-        return list(mapped)
+        return Fluent(list(mapped))
 
-    def filter(self, callback: Callable):
+    def filter(self, callback: Callable) -> 'Fluent':
         filtered = filter(callback, self._values)
 
         if isinstance(self._values, Tuple):
-            return tuple(filtered)
+            return Fluent(tuple(filtered))
 
-        return list(filtered)
+        return Fluent(list(filtered))
