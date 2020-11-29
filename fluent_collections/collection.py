@@ -1,10 +1,8 @@
 from typing import Union, Tuple, List, Callable, Any
 
-Collection = Union[List, Tuple]
 
-
-class Fluent:
-    _values: Collection
+class Collection:
+    _values: Union[List, Tuple]
 
     def __init__(self, values=None):
         if values is None:
@@ -17,7 +15,7 @@ class Fluent:
     def count(self) -> int:
         return len(self._values)
 
-    def all(self) -> Collection:
+    def all(self) -> Union[List, Tuple]:
         return self._values
 
     def first(self) -> Any:
@@ -32,18 +30,24 @@ class Fluent:
 
         return self._values[-1]
 
-    def map(self, callback: Callable) -> 'Fluent':
+    def map(self, callback: Callable) -> 'Collection':
         mapped = map(callback, self._values)
 
         if isinstance(self._values, Tuple):
-            return Fluent(tuple(mapped))
+            return Collection(tuple(mapped))
 
-        return Fluent(list(mapped))
+        return Collection(list(mapped))
 
-    def filter(self, callback: Callable) -> 'Fluent':
+    def filter(self, callback: Callable) -> 'Collection':
         filtered = filter(callback, self._values)
 
         if isinstance(self._values, Tuple):
-            return Fluent(tuple(filtered))
+            return Collection(tuple(filtered))
 
-        return Fluent(list(filtered))
+        return Collection(list(filtered))
+
+
+def collect(items=None):
+    if items is None:
+        return Collection([])
+    return Collection(items)

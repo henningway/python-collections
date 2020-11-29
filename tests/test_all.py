@@ -1,55 +1,55 @@
 import pytest
 
-from fluent_collections import Fluent
+from fluent_collections import collect
 
 
-@pytest.mark.parametrize("collection", [[], ()])
-def test_empty_collection_is_empty(collection):
-    c = Fluent(collection)
+@pytest.mark.parametrize("items", [[], ()])
+def test_empty_collection_is_empty(items):
+    c = collect(items)
     assert c.is_empty()
 
 
-@pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
-def test_count(collection):
-    c = Fluent(collection)
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+def test_count(items):
+    c = collect(items)
     assert 2 == c.count()
 
 
-@pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
-def test_all_returns_wrapped_collection(collection):
-    c = Fluent(collection)
-    assert c.all() == collection
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+def test_all_returns_wrapped_items(items):
+    c = collect(items)
+    assert c.all() == items
 
 
-@pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
-def test_first_returns_first_item(collection):
-    c = Fluent(collection)
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+def test_first_returns_first_item(items):
+    c = collect(items)
     assert 'foo' == c.first()
 
 
 def test_first_returns_none_when_empty():
-    c = Fluent()
+    c = collect()
     assert None is c.first()
 
 
-@pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
-def test_last_returns_last_item(collection):
-    c = Fluent(collection)
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+def test_last_returns_last_item(items):
+    c = collect(items)
     assert 'bar' == c.last()
 
 
 def test_last_returns_none_when_empty():
-    c = Fluent()
+    c = collect()
     assert None is c.last()
 
 
-@pytest.mark.parametrize("collection", [['foo', 'bar'], ('foo', 'bar')])
-def test_map(collection):
-    c = Fluent(collection)
-    assert type(collection)(['oof', 'rab']) == c.map(lambda s: s[::-1]).all()
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+def test_map(items):
+    c = collect(items)
+    assert type(items)(['oof', 'rab']) == c.map(lambda s: s[::-1]).all()
 
 
-@pytest.mark.parametrize("collection", [[2, 3, 1], (2, 3, 1)])
-def test_filter(collection):
-    c = Fluent(collection)
-    assert type(collection)([2, 1]) == c.filter(lambda x: x < 3).all()
+@pytest.mark.parametrize("items", [[2, 3, 1], (2, 3, 1)])
+def test_filter(items):
+    c = collect(items)
+    assert type(items)([2, 1]) == c.filter(lambda x: x < 3).all()

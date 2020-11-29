@@ -1,1 +1,1 @@
-from .fluent import Fluent
+from .collection import Collection, collect
