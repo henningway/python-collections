@@ -1,5 +1,5 @@
 from functools import reduce
-from typing import Union, Tuple, List, Callable, Any
+from typing import Union, Tuple, List, Callable, Any, Optional
 
 
 class Collection:
@@ -49,6 +49,15 @@ class Collection:
 
     def reduce(self, callback: Callable) -> Any:
         return reduce(callback, self._values)
+
+    def slice(self, start: int, stop: Optional[int] = None, step: Optional[int] = None) -> 'Collection':
+        """
+        Slices the underlying data. Note that this method works a little different from Python builtin slices, to be a
+        little more consistent as a function, without overloading. Builtin slices allow you to leave out start or stop,
+        while here start has to be provided.
+        """
+        return Collection(self._values[start:stop:step])
+
 
 def collect(items=None):
     if items is None:

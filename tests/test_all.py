@@ -59,3 +59,51 @@ def test_filter(items):
 def test_reduce(items):
     c = collect(items)
     assert 6 == c.reduce(lambda x, y: x + y)
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_start(items):
+    c = collect(items)
+    assert type(items)([4, 5, 6, 7]) == c.slice(3).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_negative_start(items):
+    c = collect(items)
+    assert type(items)([5, 6, 7]) == c.slice(-3).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_stop(items):
+    c = collect(items)
+    assert type(items)([3, 4, 5]) == c.slice(2, 5).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_negative_stop(items):
+    c = collect(items)
+    assert type(items)([3, 4, 5]) == c.slice(2, -2).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_negative_start_negative_stop(items):
+    c = collect(items)
+    assert type(items)([3, 4, 5]), c.slice(-5, -2).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_negative_start_positive_stop(items):
+    c = collect(items)
+    assert type(items)([4, 5, 6]) == c.slice(-4, 6).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_step(items):
+    c = collect(items)
+    assert type(items)([3, 5]) == c.slice(2, 6, 2).all()
+
+
+@pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
+def test_slice_negative_start_stop_step(items):
+    c = collect(items)
+    assert type(items)([6, 4]) == c.slice(-2, -5, -2).all()
