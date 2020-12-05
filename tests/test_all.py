@@ -137,3 +137,9 @@ def test_append_multiple(items):
 def test_sum(items):
     c = collect(items)
     assert -623.9 == c.sum()
+
+
+@pytest.mark.parametrize("items", [[-666, 42, 0.1], (-666, 42, 0.1)])
+def test_avg(items):
+    c = collect(items)
+    assert -207.97 == round(c.avg(), 2)

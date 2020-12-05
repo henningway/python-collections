@@ -21,6 +21,10 @@ class Collection:
 
         return Collection(type(self._values)(values))
 
+    def avg(self):
+        """Return the average of all items in the collection."""
+        return self.sum() / self.count()
+
     def count(self) -> int:
         return len(self._values)
 
