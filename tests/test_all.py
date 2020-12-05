@@ -53,18 +53,21 @@ def test_last_returns_none_when_empty():
 def test_map(items):
     c = collect(items)
     assert type(items)(['oof', 'rab']) == c.map(lambda s: s[::-1]).all()
+    assert type(items)(['foo', 'bar']) == c.all()  # immutable
 
 
 @pytest.mark.parametrize("items", [[2, 3, 1], (2, 3, 1)])
 def test_filter(items):
     c = collect(items)
     assert type(items)([2, 1]) == c.filter(lambda x: x < 3).all()
+    assert type(items)([2, 3, 1]) == c.all()  # immutable
 
 
 @pytest.mark.parametrize("items", [[1, 2, 3], (1, 2, 3)])
 def test_reduce(items):
     c = collect(items)
     assert 6 == c.reduce(lambda x, y: x + y)
+    assert type(items)([1, 2, 3]) == c.all()  # immutable
 
 
 @pytest.mark.parametrize("items", [[1, 2, 3, 4, 5, 6, 7], (1, 2, 3, 4, 5, 6, 7)])
@@ -115,6 +118,13 @@ def test_slice_negative_start_stop_step(items):
     assert type(items)([6, 4]) == c.slice(-2, -5, -2).all()
 
 
+@pytest.mark.parametrize("items", [[1, 2, 3], (1, 2, 3)])
+def test_slice_is_immutable(items):
+    c = collect(items)
+    assert type(items)([2, 3]) == c.slice(1).all()
+    assert type(items)([1, 2, 3]) == c.all()  # immutable
+
+
 @pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz')])
 def test_take(items):
     c = collect(items)
@@ -131,6 +141,7 @@ def test_take_last(items):
 def test_append_one(items):
     c = collect(items)
     assert type(items)(['foo', 'bar', 'baz']) == c.append('baz').all()
+    assert type(items)(['foo', 'bar']) == c.all()  # immutable
 
 
 @pytest.mark.parametrize("items", [['foo'], ('foo',)])
@@ -154,5 +165,5 @@ def test_avg(items):
 @pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz')])
 def test_reverse(items):
     c = collect(items)
-    assert type(items)(['foo', 'bar', 'baz']) == c.all()  # immutable
     assert type(items)(['baz', 'bar', 'foo']) == c.reverse().all()
+    assert type(items)(['foo', 'bar', 'baz']) == c.all()  # immutable
