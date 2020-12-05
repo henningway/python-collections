@@ -22,7 +22,7 @@ class Collection:
         return Collection(type(self._values)(values))
 
     def avg(self):
-        """Return the average of all items in the collection."""
+        """Returns the average of all items in the collection."""
         return self.sum() / self.count()
 
     def count(self) -> int:
@@ -62,6 +62,10 @@ class Collection:
     def reduce(self, callback: Callable) -> Any:
         return reduce(callback, self._values)
 
+    def reverse(self):
+        """Returns a new collection with the values in reversed order."""
+        return Collection(self._values[::-1])
+
     def slice(self, start: int, stop: Optional[int] = None, step: Optional[int] = None) -> 'Collection':
         """
         Slices the underlying data. Note that this method works a little different from Python builtin slices, to be a
@@ -71,7 +75,7 @@ class Collection:
         return Collection(self._values[start:stop:step])
 
     def sum(self):
-        """Return the sum of all items in the collection."""
+        """Returns the sum of all items in the collection."""
         return sum(self._values)
 
     def take(self, limit: int) -> 'Collection':

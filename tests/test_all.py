@@ -149,3 +149,10 @@ def test_sum(items):
 def test_avg(items):
     c = collect(items)
     assert -207.97 == round(c.avg(), 2)
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz')])
+def test_reverse(items):
+    c = collect(items)
+    assert type(items)(['foo', 'bar', 'baz']) == c.all()  # immutable
+    assert type(items)(['baz', 'bar', 'foo']) == c.reverse().all()
