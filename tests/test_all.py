@@ -131,3 +131,9 @@ def test_append_one(items):
 def test_append_multiple(items):
     c = collect(items)
     assert type(items)(['foo', 'bar', ['baz', 'qux']]) == c.append('bar', ['baz', 'qux']).all()
+
+
+@pytest.mark.parametrize("items", [[-666, 42, 0.1], (-666, 42, 0.1)])
+def test_sum(items):
+    c = collect(items)
+    assert -623.9 == c.sum()

@@ -66,6 +66,10 @@ class Collection:
         """
         return Collection(self._values[start:stop:step])
 
+    def sum(self):
+        """Return the sum of all items in the collection."""
+        return sum(self._values)
+
     def take(self, limit: int) -> 'Collection':
         if limit < 0:
             return self.slice(limit)
