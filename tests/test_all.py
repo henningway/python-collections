@@ -9,6 +9,12 @@ def test_empty_collection_is_empty(items):
     assert c.is_empty()
 
 
+@pytest.mark.parametrize("items", [[42], (42)])
+def test_collection_is_not_empty(items):
+    c = collect(items)
+    assert not c.is_empty()
+
+
 @pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
 def test_count(items):
     c = collect(items)
