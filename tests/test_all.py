@@ -3,31 +3,31 @@ import pytest
 from fluent_collections import collect
 
 
-@pytest.mark.parametrize("items", [[], ()])
+@pytest.mark.parametrize("items", [[], (), {}])
 def test_empty_collection_is_empty(items):
     c = collect(items)
     assert c.is_empty()
 
 
-@pytest.mark.parametrize("items", [[42], (42,)])
+@pytest.mark.parametrize("items", [[42], (42,), {'a': 42}])
 def test_collection_is_not_empty(items):
     c = collect(items)
     assert not c.is_empty()
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
 def test_count(items):
     c = collect(items)
     assert 2 == c.count()
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
 def test_all_returns_wrapped_items(items):
     c = collect(items)
     assert c.all() == items
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
 def test_first_returns_first_item(items):
     c = collect(items)
     assert 'foo' == c.first()
@@ -38,7 +38,7 @@ def test_first_returns_none_when_empty():
     assert None is c.first()
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
 def test_last_returns_last_item(items):
     c = collect(items)
     assert 'bar' == c.last()
@@ -49,18 +49,29 @@ def test_last_returns_none_when_empty():
     assert None is c.last()
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
 def test_map(items):
     c = collect(items)
-    assert type(items)(['oof', 'rab']) == c.map(lambda s: s[::-1]).all()
-    assert type(items)(['foo', 'bar']) == c.all()  # immutable
+    assert ['oof', 'rab'] == c.map(lambda v: v[::-1]).list()
+    assert ['foo', 'bar'] == c.list()  # immutable
+
+
+def test_map_dict():
+    c = collect({1: 4, 2: 5, 3: 6})
+    assert {1: 5, 2: 7, 3: 9} == c.map(lambda v, k: k + v).all()
+    assert {1: 4, 2: 5, 3: 6} == c.all()  # immutable
 
 
 @pytest.mark.parametrize("items", [[2, 3, 1], (2, 3, 1)])
 def test_filter(items):
     c = collect(items)
-    assert type(items)([2, 1]) == c.filter(lambda x: x < 3).all()
-    assert type(items)([2, 3, 1]) == c.all()  # immutable
+    assert [2, 1] == c.filter(lambda x: x < 3).list()
+    assert [2, 3, 1] == c.list()  # immutable
+
+
+def test_filter_dict():
+    c = collect({'a': 'foo', 'b': 'bar', 'c': 'baz'})
+    assert {'a': 'foo', 'c': 'baz'} == c.filter(lambda v,k: k != v)
 
 
 @pytest.mark.parametrize("items", [[1, 2, 3], (1, 2, 3)])
@@ -167,3 +178,20 @@ def test_reverse(items):
     c = collect(items)
     assert type(items)(['baz', 'bar', 'foo']) == c.reverse().all()
     assert type(items)(['foo', 'bar', 'baz']) == c.all()  # immutable
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
+def test_list(items):
+    c = collect(items)
+    assert ['foo', 'bar'] == c.list()
+
+
+def test_keys():
+    c = collect({'a': 'foo', 'b': 'bar'})
+    assert ['a', 'b'] == c.keys()
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
+def test_keys_non_dict(items):
+    c = collect(items)
+    assert [0, 1] == c.keys()
