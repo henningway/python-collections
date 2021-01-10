@@ -56,22 +56,25 @@ def test_map(items):
     assert ['foo', 'bar'] == c.list()  # immutable
 
 
-def test_map_dict():
-    c = collect({1: 4, 2: 5, 3: 6})
-    assert {1: 5, 2: 7, 3: 9} == c.map(lambda v, k: k + v).all()
-    assert {1: 4, 2: 5, 3: 6} == c.all()  # immutable
+@pytest.mark.parametrize("items", [[2, 1, 0], (2, 1, 0), {0: 2, 1: 1, 2: 0}])
+def test_map_with_keys(items):
+    c = collect(items)
+    assert [2, 2, 2] == c.map(lambda v, k: k + v).list()
+    assert [2, 1, 0] == c.list()  # immutable
 
 
-@pytest.mark.parametrize("items", [[2, 3, 1], (2, 3, 1)])
+@pytest.mark.parametrize("items", [[2, 3, 1], (2, 3, 1), {'a': 2, 'b': 3, 'c': 1}])
 def test_filter(items):
     c = collect(items)
-    assert [2, 1] == c.filter(lambda x: x < 3).list()
+    assert [2, 1] == c.filter(lambda v: v < 3).list()
     assert [2, 3, 1] == c.list()  # immutable
 
 
-def test_filter_dict():
-    c = collect({'a': 'foo', 'b': 'bar', 'c': 'baz'})
-    assert {'a': 'foo', 'c': 'baz'} == c.filter(lambda v,k: k != v)
+@pytest.mark.parametrize("items", [[2, 1, 0], (2, 1, 0), {0: 2, 1: 1, 2: 0}])
+def test_filter_with_keys(items):
+    c = collect(items)
+    assert [2, 0] == c.filter(lambda v, k: k != v).list()
+    assert [2, 1, 0] == c.list()  # immutable
 
 
 @pytest.mark.parametrize("items", [[1, 2, 3], (1, 2, 3)])
@@ -195,3 +198,9 @@ def test_keys():
 def test_keys_non_dict(items):
     c = collect(items)
     assert [0, 1] == c.keys()
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {0: 'foo', 1: 'bar'}])
+def test_dict(items):
+    c = collect(items)
+    assert {0: 'foo', 1: 'bar'} == c.dict()
