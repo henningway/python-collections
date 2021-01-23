@@ -23,7 +23,6 @@ class Collection:
 
         return Collection(type(self._wrapped)(values))
 
-    # @TODO Dicts
     def avg(self):
         """Returns the average of all items in the collection."""
         return self.sum() / self.count()
@@ -132,21 +131,23 @@ class Collection:
         """Returns a new collection with the values in reversed order."""
         return Collection(self._wrapped[::-1])
 
-    # @TODO Dicts
+    # @TODO supports Dicts, but gets the order wrong with negativ step, requires sort or reduce to be implemented first
     def slice(self, start: int, stop: Optional[int] = None, step: Optional[int] = None) -> 'Collection':
         """
         Slices the underlying data. Note that this method works a little different from Python builtin slices, to be a
         little more consistent as a function, without overloading. Builtin slices allow you to leave out start or stop,
         while here start has to be provided.
         """
+        if isinstance(self._wrapped, Dict):
+            sliced_keys = self.keys()[start:stop:step]
+            return self.filter(lambda v, k: k in sliced_keys)
+
         return Collection(self._wrapped[start:stop:step])
 
-    # @TODO Dicts
     def sum(self):
         """Returns the sum of all items in the collection."""
-        return sum(self._wrapped)
+        return sum(self.list())
 
-    # @TODO Dicts
     def take(self, limit: int) -> 'Collection':
         if limit < 0:
             return self.slice(limit)
