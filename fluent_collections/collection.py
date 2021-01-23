@@ -124,6 +124,10 @@ class Collection:
 
     # @TODO Dicts
     def reduce(self, f: Callable) -> Any:
+        """
+        Returns the result of applying f to the first two values in the collection, then to the resulting value and the
+        next value in the collection and so on.
+        """
         return reduce(f, self._wrapped)
 
     # @TODO Dict support will work as soon as slice supports negative indices with Dicts
