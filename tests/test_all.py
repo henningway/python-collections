@@ -126,11 +126,11 @@ def test_reduce(items):
     assert type(items)([1, 2, 3]) == c.all()  # immutable
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz')])
+@pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz'),  {'a': 'foo', 'b': 'bar', 'c': 'baz'}])
 def test_reverse(items):
     c = collect(items)
-    assert type(items)(['baz', 'bar', 'foo']) == c.reverse().all()
-    assert type(items)(['foo', 'bar', 'baz']) == c.all()  # immutable
+    assert ['baz', 'bar', 'foo'] == c.reverse().list()
+    assert ['foo', 'bar', 'baz'] == c.list()  # immutable
 
 
 @pytest.mark.parametrize("items", [

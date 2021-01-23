@@ -126,12 +126,12 @@ class Collection:
     def reduce(self, f: Callable) -> Any:
         return reduce(f, self._wrapped)
 
-    # @TODO Dicts
+    # @TODO Dict support will work as soon as slice supports negative indices with Dicts
     def reverse(self):
         """Returns a new collection with the values in reversed order."""
-        return Collection(self._wrapped[::-1])
+        return self.slice(-1, None, -1)
 
-    # @TODO supports Dicts, but gets the order wrong with negativ step, requires sort or reduce to be implemented first
+    # @TODO supports Dicts, but gets the order wrong with negative step, requires sort or reduce to be implemented first
     def slice(self, start: int, stop: Optional[int] = None, step: Optional[int] = None) -> 'Collection':
         """
         Slices the underlying data. Note that this method works a little different from Python builtin slices, to be a
