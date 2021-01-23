@@ -14,6 +14,7 @@ class Collection:
     def all(self) -> Union[List, Tuple]:
         return self._wrapped
 
+    # @TODO Dicts
     def append(self, *args) -> 'Collection':
         values = list(self._wrapped)
 
@@ -22,6 +23,7 @@ class Collection:
 
         return Collection(type(self._wrapped)(values))
 
+    # @TODO Dicts
     def avg(self):
         """Returns the average of all items in the collection."""
         return self.sum() / self.count()
@@ -121,13 +123,16 @@ class Collection:
 
         return Collection(type(self._wrapped)(mapped))
 
+    # @TODO Dicts
     def reduce(self, f: Callable) -> Any:
         return reduce(f, self._wrapped)
 
+    # @TODO Dicts
     def reverse(self):
         """Returns a new collection with the values in reversed order."""
         return Collection(self._wrapped[::-1])
 
+    # @TODO Dicts
     def slice(self, start: int, stop: Optional[int] = None, step: Optional[int] = None) -> 'Collection':
         """
         Slices the underlying data. Note that this method works a little different from Python builtin slices, to be a
@@ -136,10 +141,12 @@ class Collection:
         """
         return Collection(self._wrapped[start:stop:step])
 
+    # @TODO Dicts
     def sum(self):
         """Returns the sum of all items in the collection."""
         return sum(self._wrapped)
 
+    # @TODO Dicts
     def take(self, limit: int) -> 'Collection':
         if limit < 0:
             return self.slice(limit)
