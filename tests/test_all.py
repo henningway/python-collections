@@ -3,23 +3,17 @@ import pytest
 from fluent_collections import collect
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
-def test_all_returns_wrapped_items(items):
-    c = collect(items)
-    assert c.all() == items
-
-
 @pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar')])
 def test_append_one(items):
     c = collect(items)
-    assert type(items)(['foo', 'bar', 'baz']) == c.append('baz').all()
-    assert type(items)(['foo', 'bar']) == c.all()  # immutable
+    assert type(items)(['foo', 'bar', 'baz']) == c.append('baz').eject()
+    assert type(items)(['foo', 'bar']) == c.eject()  # immutable
 
 
 @pytest.mark.parametrize("items", [['foo'], ('foo',)])
 def test_append_multiple(items):
     c = collect(items)
-    assert type(items)(['foo', 'bar', ['baz', 'qux']]) == c.append('bar', ['baz', 'qux']).all()
+    assert type(items)(['foo', 'bar', ['baz', 'qux']]) == c.append('bar', ['baz', 'qux']).eject()
 
 
 @pytest.mark.parametrize("items", [[-666, 42, 0.1], (-666, 42, 0.1), {'a': -666, 'b': 42, 'c': 0.1}])
@@ -35,23 +29,26 @@ def test_count(items):
 
 
 @pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {0: 'foo', 1: 'bar'}])
-def test_dict(items):
+def test_eject(items):
     c = collect(items)
-    assert {0: 'foo', 1: 'bar'} == c.dict()
+    assert items == c.eject()
+    assert {0: 'foo', 1: 'bar'} == c.eject(dict)
+    assert ['foo', 'bar'] == c.eject(list)
+    assert ('foo', 'bar') == c.eject(tuple)
 
 
 @pytest.mark.parametrize("items", [[2, 3, 1], (2, 3, 1), {'a': 2, 'b': 3, 'c': 1}])
 def test_filter(items):
     c = collect(items)
-    assert [2, 1] == c.filter(lambda v: v < 3).list()
-    assert [2, 3, 1] == c.list()  # immutable
+    assert [2, 1] == c.filter(lambda v: v < 3).eject(list)
+    assert [2, 3, 1] == c.eject(list)  # immutable
 
 
 @pytest.mark.parametrize("items", [[2, 1, 0], (2, 1, 0), {0: 2, 1: 1, 2: 0}])
 def test_filter_with_keys(items):
     c = collect(items)
-    assert [2, 0] == c.filter(lambda v, k: k != v).list()
-    assert [2, 1, 0] == c.list()  # immutable
+    assert [2, 0] == c.filter(lambda v, k: k != v).eject(list)
+    assert [2, 1, 0] == c.eject(list)  # immutable
 
 
 @pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
@@ -102,35 +99,43 @@ def test_last_returns_none_when_empty():
 @pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
 def test_list(items):
     c = collect(items)
-    assert ['foo', 'bar'] == c.list()
+    assert ['foo', 'bar'] == c.eject(list)
 
 
 @pytest.mark.parametrize("items", [['foo', 'bar'], ('foo', 'bar'), {'a': 'foo', 'b': 'bar'}])
 def test_map(items):
     c = collect(items)
-    assert ['oof', 'rab'] == c.map(lambda v: v[::-1]).list()
-    assert ['foo', 'bar'] == c.list()  # immutable
+    assert ['oof', 'rab'] == c.map(lambda v: v[::-1]).eject(list)
+    assert ['foo', 'bar'] == c.eject(list)  # immutable
 
 
 @pytest.mark.parametrize("items", [[2, 1, 0], (2, 1, 0), {0: 2, 1: 1, 2: 0}])
 def test_map_with_keys(items):
     c = collect(items)
-    assert [2, 2, 2] == c.map(lambda v, k: k + v).list()
-    assert [2, 1, 0] == c.list()  # immutable
+    assert [2, 2, 2] == c.map(lambda v, k: k + v).eject(list)
+    assert [2, 1, 0] == c.eject(list)  # immutable
 
 
-@pytest.mark.parametrize("items", [[1, 2, 3], (1, 2, 3)])
+@pytest.mark.parametrize("items", [[2, 1, 0], (2, 1, 0), {0: 2, 1: 1, 2: 0}])
 def test_reduce(items):
     c = collect(items)
-    assert 6 == c.reduce(lambda x, y: x + y)
-    assert type(items)([1, 2, 3]) == c.all()  # immutable
+    assert 3 == c.reduce(lambda carry, value: carry + value)
+    assert 6 == c.reduce(lambda carry, value: carry + value, 3)  # with initial value
+    assert [2, 1, 0] == c.eject(list)  # immutable
 
 
-@pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz'),  {'a': 'foo', 'b': 'bar', 'c': 'baz'}])
+@pytest.mark.parametrize("items", [[2, 1, 0], (2, 1, 0), {0: 2, 1: 1, 2: 0}])
+def test_reduce_with_keys(items):
+    c = collect(items)
+    assert 6 == c.reduce(lambda x, y, k: x + y + k)
+    assert [2, 1, 0] == c.eject(list)  # immutable
+
+
+@pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz'), {'a': 'foo', 'b': 'bar', 'c': 'baz'}])
 def test_reverse(items):
     c = collect(items)
-    assert ['baz', 'bar', 'foo'] == c.reverse().list()
-    assert ['foo', 'bar', 'baz'] == c.list()  # immutable
+    assert ['baz', 'bar', 'foo'] == c.reverse().eject(list)
+    assert ['foo', 'bar', 'baz'] == c.eject(list)  # immutable
 
 
 @pytest.mark.parametrize("items", [
@@ -140,7 +145,7 @@ def test_reverse(items):
 ])
 def test_slice_start(items):
     c = collect(items)
-    assert [4, 5, 6, 7] == c.slice(3).list()
+    assert [4, 5, 6, 7] == c.slice(3).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -150,7 +155,7 @@ def test_slice_start(items):
 ])
 def test_slice_negative_start(items):
     c = collect(items)
-    assert [5, 6, 7] == c.slice(-3).list()
+    assert [5, 6, 7] == c.slice(-3).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -160,7 +165,7 @@ def test_slice_negative_start(items):
 ])
 def test_slice_stop(items):
     c = collect(items)
-    assert [3, 4, 5] == c.slice(2, 5).list()
+    assert [3, 4, 5] == c.slice(2, 5).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -170,7 +175,7 @@ def test_slice_stop(items):
 ])
 def test_slice_negative_stop(items):
     c = collect(items)
-    assert [3, 4, 5] == c.slice(2, -2).list()
+    assert [3, 4, 5] == c.slice(2, -2).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -180,7 +185,7 @@ def test_slice_negative_stop(items):
 ])
 def test_slice_negative_start_negative_stop(items):
     c = collect(items)
-    assert [3, 4, 5] == c.slice(-5, -2).list()
+    assert [3, 4, 5] == c.slice(-5, -2).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -190,7 +195,7 @@ def test_slice_negative_start_negative_stop(items):
 ])
 def test_slice_negative_start_positive_stop(items):
     c = collect(items)
-    assert [4, 5, 6] == c.slice(-4, 6).list()
+    assert [4, 5, 6] == c.slice(-4, 6).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -200,7 +205,7 @@ def test_slice_negative_start_positive_stop(items):
 ])
 def test_slice_step(items):
     c = collect(items)
-    assert [3, 5] == c.slice(2, 6, 2).list()
+    assert [3, 5] == c.slice(2, 6, 2).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -210,7 +215,7 @@ def test_slice_step(items):
 ])
 def test_slice_negative_start_stop_step(items):
     c = collect(items)
-    assert [6, 4] == c.slice(-2, -5, -2).list()
+    assert [6, 4] == c.slice(-2, -5, -2).eject(list)
 
 
 @pytest.mark.parametrize("items", [
@@ -220,8 +225,8 @@ def test_slice_negative_start_stop_step(items):
 ])
 def test_slice_is_immutable(items):
     c = collect(items)
-    assert [2, 3] == c.slice(1).list()
-    assert [1, 2, 3] == c.list()  # immutable
+    assert [2, 3] == c.slice(1).eject(list)
+    assert [1, 2, 3] == c.eject(list)  # immutable
 
 
 @pytest.mark.parametrize("items", [[-666, 42, 0.1], (-666, 42, 0.1), {'a': -666, 'b': 42, 'c': 0.1}])
@@ -233,12 +238,12 @@ def test_sum(items):
 @pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz'), {'a': 'foo', 'b': 'bar', 'c': 'baz'}])
 def test_take(items):
     c = collect(items)
-    assert ['foo', 'bar'] == c.take(2).list()
-    assert ['foo', 'bar', 'baz'] == c.list()  # immutable
+    assert ['foo', 'bar'] == c.take(2).eject(list)
+    assert ['foo', 'bar', 'baz'] == c.eject(list)  # immutable
 
 
 @pytest.mark.parametrize("items", [['foo', 'bar', 'baz'], ('foo', 'bar', 'baz'), {'a': 'foo', 'b': 'bar', 'c': 'baz'}])
 def test_take_last(items):
     c = collect(items)
-    assert ['bar', 'baz'] == c.take(-2).list()
-    assert ['foo', 'bar', 'baz'] == c.list()  # immutable
+    assert ['bar', 'baz'] == c.take(-2).eject(list)
+    assert ['foo', 'bar', 'baz'] == c.eject(list)  # immutable
